@@ -1,5 +1,6 @@
 package com.hanyujie.dawnpic.service;
 
+import com.hanyujie.dawnpic.entity.Image;
 import com.hanyujie.dawnpic.mapper.ImageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -7,8 +8,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.hanyujie.dawnpic.entity.Image;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,39 +20,48 @@ import java.nio.file.Paths;
 
 @Service
 public class ImageService {
+    private final ImageMapper imageMapper;
+
     @Autowired
-    ImageMapper imageMapper;
+    public ImageService(ImageMapper imageMapper) {
+        this.imageMapper = imageMapper;
+    }
+
+    final static String USER_HOME = System.getProperty("user.home");
 
     public String uploadImage(MultipartFile rFile) throws IOException {
-        byte[] fileBytes = rFile.getBytes();
+        String fileName = rFile.getOriginalFilename();
+        String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".")+1) : null;
 
-        String name = "defaultName";
+        byte[] bytes = rFile.getBytes();
+        Long uploadDate = System.currentTimeMillis();
 
-        Image image = new Image(name);
+        BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
+        int width = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
+
+        Image image = new Image(0, fileName, fileExtension, null, null, uploadDate, width, height);
 
         imageMapper.insertPic(image);
 
         Integer imageId = image.getId();
 
-        String userHome = System.getProperty("user.home");
-
-        Path filePath = Paths.get(userHome, "Pictures", imageId.toString() + ".jpg");
+        Path filePath = Paths.get(USER_HOME, "Pictures", imageId + "." + fileExtension);
 
         try (FileOutputStream fos = new FileOutputStream(filePath.toString())) {
-            fos.write(fileBytes);
-            System.out.println(fileBytes.length);
+            fos.write(bytes);
             System.out.println("Data written/rewritten to file successfully");
         } catch (IOException e) {
             e.printStackTrace();
-        };
+        }
 
         return ""+imageId;
     }
 
     public ResponseEntity<Resource> downloadImage(Integer imageId) throws IOException{
-        String userHome = System.getProperty("user.home");
+        Image image = imageMapper.getPic(imageId);
 
-        Path filePath = Paths.get(userHome, "Pictures", imageId.toString() + ".jpg");
+        Path filePath = Paths.get(USER_HOME, "Pictures", imageId.toString() + "." + image.getExtension());
 
         File file = new File(filePath.toString());
         if (!file.exists()) {

@@ -10,8 +10,12 @@ import java.io.IOException;
 
 @RestController
 public class ImageController {
+    private ImageService imageService;
+
     @Autowired
-    ImageService imageService;
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @PostMapping("/api/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
