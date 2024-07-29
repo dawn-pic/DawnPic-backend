@@ -1,6 +1,7 @@
 package com.hanyujie.dawnpic.web;
 
 import com.hanyujie.dawnpic.service.ImageService;
+import com.hanyujie.dawnpic.service.InvalidImageExtensionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,12 @@ public class ImageController {
 
     @PostMapping("/api/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
-        String result = imageService.uploadImage(file);
-        return ResponseEntity.ok(result);
+        try {
+            String result = imageService.uploadImage(file);
+            return ResponseEntity.ok(result);
+        } catch (InvalidImageExtensionException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/api/image/{imageId}")

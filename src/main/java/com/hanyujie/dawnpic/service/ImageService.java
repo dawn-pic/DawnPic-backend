@@ -11,10 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -27,56 +24,67 @@ public class ImageService {
         this.imageMapper = imageMapper;
     }
 
-    final static String USER_HOME = System.getProperty("user.home");
+    private static final String USER_HOME = System.getProperty("user.home");
 
-    public String uploadImage(MultipartFile rFile) throws IOException {
+    /**
+     * Uploads an image file and saves its metadata to the database.
+     * @param rFile the image file to upload
+     * @return the ID of the uploaded image
+     * @throws IOException if an I/O error occurs
+     */
+    public String uploadImage(MultipartFile rFile) throws InvalidImageExtensionException, IOException {
         String fileName = rFile.getOriginalFilename();
-        String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".")+1) : null;
+
+        // get the image extension and judge if it is valid
+        String imageExtension = ImageExtensionChecker.getFileExtension(fileName);
+        Boolean isImageExtension = ImageExtensionChecker.isImageExtension(imageExtension);
+        if (!isImageExtension) {
+            throw new InvalidImageExtensionException("invalid image extension: " + imageExtension);
+        }
 
         byte[] bytes = rFile.getBytes();
-        Long uploadDate = System.currentTimeMillis();
+        long uploadDate = System.currentTimeMillis();
 
+        // Read image dimensions
         BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
 
-        Image image = new Image(0, fileName, fileExtension, null, null, uploadDate, width, height);
-
+        // Create and save image metadata
+        Image image = new Image(0, fileName, imageExtension, null, null, uploadDate, width, height);
         imageMapper.insertPic(image);
 
-        Integer imageId = image.getId();
-
-        Path filePath = Paths.get(USER_HOME, "Pictures", imageId + "." + fileExtension);
-
+        // Save image file to disk
+        Path filePath = Paths.get(USER_HOME, "Pictures", image.getId() + "." + imageExtension);
         try (FileOutputStream fos = new FileOutputStream(filePath.toString())) {
             fos.write(bytes);
-            System.out.println("Data written/rewritten to file successfully");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
-        return ""+imageId;
+        return String.valueOf(image.getId());
     }
 
-    public ResponseEntity<Resource> downloadImage(Integer imageId) throws IOException{
+    /**
+     * Downloads an image file by its ID.
+     * @param imageId the ID of the image to download
+     * @return the image file as a ResponseEntity
+     * @throws FileNotFoundException if the file does not exist
+     */
+    public ResponseEntity<Resource> downloadImage(Integer imageId) throws FileNotFoundException {
         Image image = imageMapper.getPic(imageId);
-
-        Path filePath = Paths.get(USER_HOME, "Pictures", imageId.toString() + "." + image.getExtension());
+        Path filePath = Paths.get(USER_HOME, "Pictures", imageId + "." + image.getExtension());
 
         File file = new File(filePath.toString());
         if (!file.exists()) {
-            throw new IOException("File doesn't exist");
+            throw new FileNotFoundException("File doesn't exist");
         }
 
         FileSystemResource resource = new FileSystemResource(filePath);
-
         MediaType mediaType = MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(mediaType);
+        headers.setContentDisposition(ContentDisposition.inline().filename(resource.getFilename()).build());
 
-        ContentDisposition disposition = ContentDisposition.inline().filename(resource.getFilename()).build();
-
-        headers.setContentDisposition(disposition);
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }
