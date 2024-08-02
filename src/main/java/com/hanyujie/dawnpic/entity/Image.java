@@ -1,8 +1,10 @@
 package com.hanyujie.dawnpic.entity;
 
 
+import java.util.UUID;
+
 public class Image {
-    private int id;
+    private UUID imageUuid;
     private String name;
     private String extension;
     private String description;
@@ -11,8 +13,8 @@ public class Image {
     private int sizeWidth;
     private int sizeHeight;
 
-    public Image(int id, String name, String extension, String description, String altInfo, Long uploadDate, int sizeWidth, int sizeHeight) {
-        this.id = id;
+    public Image(UUID imageUuid, String name, String extension, String description, String altInfo, Long uploadDate, int sizeWidth, int sizeHeight) {
+        this.imageUuid = imageUuid;
         this.name = name;
         this.extension = extension;
         this.description = description;
@@ -22,12 +24,12 @@ public class Image {
         this.sizeHeight = sizeHeight;
     }
 
-    public int getId() {
-        return id;
+    public UUID getImageUuid() {
+        return imageUuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setImageUuid(UUID imageUuid) {
+        this.imageUuid = imageUuid;
     }
 
     public String getName() {
