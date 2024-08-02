@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 public class ImageController {
@@ -28,10 +29,10 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/api/image/{imageId}")
-    public ResponseEntity<?> getImage(@PathVariable Integer imageId) {
+    @GetMapping("/api/image/{imageUuid}")
+    public ResponseEntity<?> getImage(@PathVariable UUID imageUuid) {
         try {
-            return imageService.downloadImage(imageId);
+            return imageService.downloadImage(imageUuid);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.toString());
         }

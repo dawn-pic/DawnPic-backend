@@ -12,8 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 public class ImageService {
@@ -29,7 +32,7 @@ public class ImageService {
     /**
      * Uploads an image file and saves its metadata to the database.
      * @param rFile the image file to upload
-     * @return the ID of the uploaded image
+     * @return the UUID of the uploaded image
      * @throws IOException if an I/O error occurs
      */
     public String uploadImage(MultipartFile rFile) throws InvalidImageExtensionException, IOException {
@@ -50,28 +53,33 @@ public class ImageService {
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
 
+        // Create a unique image UUID
+        UUID imageUuid = UUID.randomUUID();
+
         // Create and save image metadata
-        Image image = new Image(0, fileName, imageExtension, null, null, uploadDate, width, height);
+        // including new created UUID
+        Image image = new Image(imageUuid, fileName, imageExtension, null, null, uploadDate, width, height);
         imageMapper.insertPic(image);
 
         // Save image file to disk
-        Path filePath = Paths.get(USER_HOME, "Pictures", image.getId() + "." + imageExtension);
+        Path filePath = Paths.get(USER_HOME, "Pictures", imageUuid + "." + imageExtension);
         try (FileOutputStream fos = new FileOutputStream(filePath.toString())) {
             fos.write(bytes);
         }
 
-        return String.valueOf(image.getId());
+        return imageUuid.toString();
     }
 
     /**
      * Downloads an image file by its ID.
-     * @param imageId the ID of the image to download
+     * @param imageUuid the UUID of the image to download
      * @return the image file as a ResponseEntity
      * @throws FileNotFoundException if the file does not exist
      */
-    public ResponseEntity<Resource> downloadImage(Integer imageId) throws FileNotFoundException {
-        Image image = imageMapper.getPic(imageId);
-        Path filePath = Paths.get(USER_HOME, "Pictures", imageId + "." + image.getExtension());
+    public ResponseEntity<Resource> downloadImage(UUID imageUuid) throws FileNotFoundException {
+//        System.out.println(imageUuid);
+        Image image = imageMapper.getPic(imageUuid);
+        Path filePath = Paths.get(USER_HOME, "Pictures", imageUuid + "." + image.getExtension());
 
         File file = new File(filePath.toString());
         if (!file.exists()) {
@@ -83,7 +91,7 @@ public class ImageService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(mediaType);
-        headers.setContentDisposition(ContentDisposition.inline().filename(resource.getFilename()).build());
+        headers.setContentDisposition(ContentDisposition.inline().filename(image.getName()).build());
 
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }

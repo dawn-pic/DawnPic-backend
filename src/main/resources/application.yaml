@@ -13,3 +13,13 @@ spring:
 server:
   port: 8080
   forward-headers-strategy: native
+
+mybatis:
+  type-handlers-package: com.hanyujie.dawnpic.mapper.typeHandler
+
+logging:
+  level:
+    com:
+      hanyujie:
+        dawnpic:
+          mapper: TRACE
