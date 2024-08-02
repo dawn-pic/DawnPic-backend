@@ -1,6 +1,6 @@
 # Change Log of DawnPic
 
-## V0.01
+## v0.01
 
 **Initial Release**
 
@@ -10,6 +10,10 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 - **Image Management**: Upload and retrieve images seamlessly.
 - **Automatic Image Analysis**: Automatically analyze and extract image metadata, including name, extension, width, and height.
 
-## V0.02
+## v0.02
 
 - **Image Upload Validation**: Implemented a check to verify the file extensions of uploaded images, ensuring only valid image files are accepted.
+
+## v0.03
+
+- **Refactor image identification**: replace auto-incremented integer IDs with uuid
