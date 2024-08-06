@@ -16,4 +16,9 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 
 ## v0.03
 
-- **Refactor image identification**: replace auto-incremented integer IDs with uuid
+- **Refactor image identification**: replace auto-incremented integer IDs with uuid.
+
+## v0.04
+
+- **Database Update via RESTful API**: Added support for updating the database using RESTful API endpoints, enabling seamless integration and data management.
+- **Web-Based Database Update**: Added support for updating the database via a web interface at the URL: `http(s):<domainName>:<port>/config/data-source/index.html`.
