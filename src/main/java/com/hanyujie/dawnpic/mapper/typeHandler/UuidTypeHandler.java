@@ -24,13 +24,13 @@ public class UuidTypeHandler extends BaseTypeHandler<UUID> {
         return bytesToUuid(rs.getBytes(columnName));
     }
 
-    // Retrieves a nullable UUID result from the ResultSet by column index
+    // Retrieves a nullable UUID result from the ResultSet by column index.html
     @Override
     public UUID getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         return bytesToUuid(rs.getBytes(columnIndex));
     }
 
-    // Retrieves a nullable UUID result from the CallableStatement by column index
+    // Retrieves a nullable UUID result from the CallableStatement by column index.html
     @Override
     public UUID getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return bytesToUuid(cs.getBytes(columnIndex));
