@@ -1,5 +1,7 @@
 # DawnPic
 
+![banner image](./dawnpic.png)
+
 ## Overview
 
 **DawnPic** is an open-source picture bed system built with Spring Boot. It offers seamless image management, database support, and automatic image analysis. Whether you're a developer looking to integrate image handling into your application or someone who needs a reliable image storage solution, DawnPic has you covered.
