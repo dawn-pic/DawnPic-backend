@@ -22,3 +22,7 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 
 - **Database Update via RESTful API**: Added support for updating the database using RESTful API endpoints, enabling seamless integration and data management.
 - **Web-Based Database Update**: Added support for updating the database via a web interface at the URL: `http(s):<domainName>:<port>/config/data-source/index.html`.
+
+## v0.05
+
+- **Refactor to MyBatis Plus**: Replaced `mybatis-spring-boot-starter` with `mybatis-plus` to tidy up the codebase, enhancing maintainability.
