@@ -1,11 +1,7 @@
-package com.hanyujie.dawnpic.config;
+package com.hanyujie.dawnpic.entity;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ConfigurationProperties(prefix = "spring.datasource")
-public class DatabaseConfig {
+public class DatabaseConfigDTO {
     private String url;
     private String username;
     private String password;

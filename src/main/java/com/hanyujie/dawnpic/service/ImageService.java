@@ -59,7 +59,7 @@ public class ImageService {
         // Create and save image metadata
         // including new created UUID
         Image image = new Image(imageUuid, fileName, imageExtension, null, null, uploadDate, width, height);
-        imageMapper.insertPic(image);
+        imageMapper.insert(image);
 
         // Save image file to disk
         Path filePath = Paths.get(USER_HOME, "Pictures", imageUuid + "." + imageExtension);
@@ -78,7 +78,7 @@ public class ImageService {
      */
     public ResponseEntity<Resource> downloadImage(UUID imageUuid) throws FileNotFoundException {
 //        System.out.println(imageUuid);
-        Image image = imageMapper.getPic(imageUuid);
+        Image image = imageMapper.selectById(imageUuid);
         Path filePath = Paths.get(USER_HOME, "Pictures", imageUuid + "." + image.getExtension());
 
         File file = new File(filePath.toString());
