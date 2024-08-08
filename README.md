@@ -26,12 +26,12 @@
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/DawnPic.git
+    git clone https://github.com/hanyujie2002/DawnPic.git
     cd DawnPic
     ```
 
 2. **Configure the database:**
-    Update the `application.properties` file with your MySQL database credentials.
+   Update the `application.yaml` file with your MySQL database credentials.
 
 3. **Build the project:**
     ```bash
@@ -54,6 +54,10 @@ To upload an image, use the `/api/upload` endpoint. Ensure the file extension is
 ### Retrieving Images
 
 Retrieve images using the `/api/images/{imageUuid}` endpoint, where `{imageUuid}` is the UUID of the image.
+
+### Change Data Sources
+
+To change a data source, use the `/api/config/database` endpoint.
 
 ## Contributing
 
