@@ -26,3 +26,8 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 ## v0.1.2
 
 - **Refactor to MyBatis Plus**: Replaced `mybatis-spring-boot-starter` with `mybatis-plus` to tidy up the codebase, enhancing maintainability.
+
+## v0.1.3
+
+- **User Registration**: Implemented user registration functionality using Spring Security and JJWT, allowing new users to create accounts securely.
+- **User Login**: Added user login feature with Spring Security and JJWT, enabling authenticated access to the application.
