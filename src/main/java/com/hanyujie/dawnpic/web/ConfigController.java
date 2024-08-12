@@ -1,6 +1,6 @@
 package com.hanyujie.dawnpic.web;
 
-import com.hanyujie.dawnpic.entity.DatabaseConfigDTO;
+import com.hanyujie.dawnpic.entity.DatabaseConfigRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -18,7 +18,7 @@ public class ConfigController {
     private DataSource dataSource;
 
     @PostMapping("/database")
-    public ResponseEntity<String> updateDatabaseConfig(@RequestBody DatabaseConfigDTO newConfig) {
+    public ResponseEntity<String> updateDatabaseConfig(@RequestBody DatabaseConfigRequest newConfig) {
         DriverManagerDataSource driverManagerDataSource = (DriverManagerDataSource) dataSource;
 
         driverManagerDataSource.setUrl(newConfig.getUrl());

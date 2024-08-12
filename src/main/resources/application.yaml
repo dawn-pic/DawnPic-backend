@@ -12,12 +12,22 @@ spring:
       multipart:
         enabled: true
 
+  security:
+    user:
+      name: hanyujie
+      password: 123456
+      roles: ADMIN
+
 mybatis-plus:
   type-handlers-package: com.hanyujie.dawnpic.mapper.typeHandler
 
 server:
   port: 8080
   forward-headers-strategy: native
+
+jwt:
+  secret: 3c588b9e-7834-4ff6-8269-78551b6c874b
+  expiration: 12000000
 
 ---
 
