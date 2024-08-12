@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.UUID;
 
-@TableName("images")
 public class Image {
     @TableId
     private UUID imageUuid;

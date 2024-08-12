@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RestController
 public class ImageController {
-    private ImageService imageService;
+    private final ImageService imageService;
 
     @Autowired
     public ImageController(ImageService imageService) {

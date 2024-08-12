@@ -1,7 +1,7 @@
 package com.hanyujie.dawnpic.entity;
 
 
-public class DatabaseConfigDTO {
+public class DatabaseConfigRequest {
     private String url;
     private String username;
     private String password;
