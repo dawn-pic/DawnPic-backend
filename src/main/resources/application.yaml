@@ -2,11 +2,18 @@ spring:
   application:
     name: DawnPic
 
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/dawn_pic
+#    username: hanyujie
+#    password: 123456
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
   datasource:
-    url: jdbc:mysql://localhost:3306/dawn_pic
+    url: jdbc:p6spy:mysql://localhost:3306/dawn_pic
     username: hanyujie
     password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+
 
   servlet:
       multipart:
@@ -28,6 +35,15 @@ server:
 jwt:
   secret: 3c588b9e-7834-4ff6-8269-78551b6c874b
   expiration: 12000000
+
+#debug: true
+
+logging:
+  level:
+    com:
+      hanyujie:
+        dawnpic:
+          mapper: TRACE
 
 ---
 

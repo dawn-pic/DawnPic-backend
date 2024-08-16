@@ -4,6 +4,8 @@ import com.hanyujie.dawnpic.service.ImageService;
 import com.hanyujie.dawnpic.service.InvalidImageExtensionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,5 +38,10 @@ public class ImageController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.toString());
         }
+    }
+
+    @GetMapping("/api/userImages")
+    public ResponseEntity<?> getUserImages(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(imageService.getUserImage(userDetails));
     }
 }

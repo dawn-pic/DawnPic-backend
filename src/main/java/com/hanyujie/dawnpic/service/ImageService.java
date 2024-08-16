@@ -1,11 +1,20 @@
 package com.hanyujie.dawnpic.service;
 
 import com.hanyujie.dawnpic.entity.Image;
+import com.hanyujie.dawnpic.entity.User;
+import com.hanyujie.dawnpic.entity.UserImage;
 import com.hanyujie.dawnpic.mapper.ImageMapper;
+import com.hanyujie.dawnpic.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,15 +23,20 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class ImageService {
     private final ImageMapper imageMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public ImageService(ImageMapper imageMapper) {
+    public ImageService(ImageMapper imageMapper, UserService userService, UserMapper userMapper) {
         this.imageMapper = imageMapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     private static final String USER_HOME = System.getProperty("user.home");
@@ -54,9 +68,21 @@ public class ImageService {
         // Create a unique image UUID
         UUID imageUuid = UUID.randomUUID();
 
+        // Get user id from Spring security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = null;
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            userId = 0L;
+        } else {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User user = userService.getUserFromUsername(userDetails.getUsername());
+
+            userId = user.getId();
+        }
+
         // Create and save image metadata
         // including new created UUID
-        Image image = new Image(imageUuid, fileName, imageExtension, null, null, uploadDate, width, height);
+        Image image = new Image(imageUuid, fileName, imageExtension, null, null, uploadDate, width, height, userId);
         imageMapper.insert(image);
 
         // Save image file to disk
@@ -75,7 +101,6 @@ public class ImageService {
      * @throws FileNotFoundException if the file does not exist
      */
     public ResponseEntity<Resource> downloadImage(UUID imageUuid) throws FileNotFoundException {
-//        System.out.println(imageUuid);
         Image image = imageMapper.selectById(imageUuid);
         Path filePath = Paths.get(USER_HOME, "Pictures", imageUuid + "." + image.getExtension());
 
@@ -92,5 +117,17 @@ public class ImageService {
         headers.setContentDisposition(ContentDisposition.inline().filename(image.getName()).build());
 
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    public List<UserImage> getUserImage(UserDetails userDetails) {
+        String username = null;
+
+        if (userDetails == null) {
+            username = "anonymousUser";
+        } else {
+            username = userDetails.getUsername();
+        }
+
+        return userMapper.selectUserImageByUsername(username);
     }
 }

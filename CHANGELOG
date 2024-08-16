@@ -16,7 +16,7 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 
 ## v0.1.0
 
-- **Refactor image identification**: replace auto-incremented integer IDs with uuid.
+- **(BREAKING CHANGE) Refactor Image Identification**: replace auto-incremented integer IDs with uuid.
 
 ## v0.1.1
 
@@ -31,3 +31,12 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 
 - **User Registration**: Implemented user registration functionality using Spring Security and JJWT, allowing new users to create accounts securely.
 - **User Login**: Added user login feature with Spring Security and JJWT, enabling authenticated access to the application.
+
+## v0.2.0
+
+### Breaking Changes
+- **Image User Info**: The `Image` entity class has been refactored to include a new field, `userId`, which corresponds to the ID of the user. For anonymous users, this ID is set to `0`.
+
+### New Features
+- **User Image Uploading**: The image uploading functionality has been refactored to record the `userId` in the image table. If an image is uploaded without a logged-in user, the `userId` will be set to `0`.
+- **User Image Information Retrieval**: Added support for retrieving information about images uploaded by a user through the `/api/userImages` endpoint. This API is accessible to logged-in users only.
