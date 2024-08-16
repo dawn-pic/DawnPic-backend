@@ -1,14 +1,13 @@
 package com.hanyujie.dawnpic.entity;
 
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.util.UUID;
 
-public class Image {
-    @TableId
+public class UserImage {
+    private Long id;
+    private String username;
+    private String password;
+    private String role;
+
     private UUID imageUuid;
     private String name;
     private String extension;
@@ -17,18 +16,37 @@ public class Image {
     private Long uploadDate;
     private int sizeWidth;
     private int sizeHeight;
-    private Long userId;
 
-    public Image(UUID imageUuid, String name, String extension, String description, String altInfo, Long uploadDate, int sizeWidth, int sizeHeight, Long userId) {
-        this.imageUuid = imageUuid;
-        this.name = name;
-        this.extension = extension;
-        this.description = description;
-        this.altInfo = altInfo;
-        this.uploadDate = uploadDate;
-        this.sizeWidth = sizeWidth;
-        this.sizeHeight = sizeHeight;
-        this.userId = userId;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public UUID getImageUuid() {
@@ -95,11 +113,21 @@ public class Image {
         this.sizeHeight = sizeHeight;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    @Override
+    public String toString() {
+        return "UserImage{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", imageUuid=" + imageUuid +
+                ", name='" + name + '\'' +
+                ", extension='" + extension + '\'' +
+                ", description='" + description + '\'' +
+                ", altInfo='" + altInfo + '\'' +
+                ", uploadDate=" + uploadDate +
+                ", sizeWidth=" + sizeWidth +
+                ", sizeHeight=" + sizeHeight +
+                '}';
     }
 }

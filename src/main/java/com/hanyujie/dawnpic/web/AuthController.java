@@ -3,6 +3,7 @@ package com.hanyujie.dawnpic.web;
 import com.hanyujie.dawnpic.entity.AuthRequest;
 import com.hanyujie.dawnpic.entity.AuthResponse;
 import com.hanyujie.dawnpic.entity.User;
+import com.hanyujie.dawnpic.enums.RoleEnum;
 import com.hanyujie.dawnpic.jwt.JwtUtil;
 import com.hanyujie.dawnpic.service.CustomUserDetailsService;
 import com.hanyujie.dawnpic.service.UserService;
@@ -11,7 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +48,8 @@ public class AuthController {
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        final String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername(), role);
 
         return ResponseEntity.ok(new AuthResponse(jwt));
     }
@@ -51,10 +57,19 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody AuthRequest authRequest) throws Exception {
         try {
-            userService.saveUser((User) authRequest);
-            return ResponseEntity.ok(new AuthResponse(jwtUtil.generateToken(authRequest.getUsername())));
+            User newUser = new User();
+            newUser.setUsername(authRequest.getUsername());
+            newUser.setPassword(authRequest.getPassword());
+
+            userService.saveUser(newUser);
+            return ResponseEntity.ok(new AuthResponse(jwtUtil.generateToken(authRequest.getUsername(), RoleEnum.USER.getRole())));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("User registration failed" + e.getMessage());
         }
+    }
+
+    @GetMapping("/current-user")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userDetails);
     }
 }
