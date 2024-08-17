@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.getRole())
 
                         // user endpoints
+                        .requestMatchers("/api/userImages").hasAnyAuthority(RoleEnum.USER.getRole(), RoleEnum.ADMIN.getRole())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

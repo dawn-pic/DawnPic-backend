@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.hanyujie</groupId>
     <artifactId>DawnPic</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>DawnPic</name>
     <description>DawnPic</description>
     <url/>
@@ -121,13 +121,13 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <executable>true</executable>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

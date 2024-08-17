@@ -16,12 +16,12 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 
 ## v0.1.0
 
-- **(BREAKING CHANGE) Refactor Image Identification**: replace auto-incremented integer IDs with uuid.
+- **(BREAKING CHANGE) Refactor Image Identification**: Replaced auto-incremented integer IDs with UUID.
 
 ## v0.1.1
 
 - **Database Update via RESTful API**: Added support for updating the database using RESTful API endpoints, enabling seamless integration and data management.
-- **Web-Based Database Update**: Added support for updating the database via a web interface at the URL: `http(s):<domainName>:<port>/config/data-source/index.html`.
+- **Web-Based Database Update**: Added support for updating the database via a web interface at the URL: `http(s)://<domainName>:<port>/config/data-source/index.html`.
 
 ## v0.1.2
 
@@ -34,9 +34,11 @@ I am excited to announce the first release of DawnPic, an open-source picture be
 
 ## v0.2.0
 
-### Breaking Changes
-- **Image User Info**: The `Image` entity class has been refactored to include a new field, `userId`, which corresponds to the ID of the user. For anonymous users, this ID is set to `0`.
-
-### New Features
+- **(BREAKING CHANGE) Image User Info**: The `Image` entity class has been refactored to include a new field, `userId`, which corresponds to the ID of the user. For anonymous users, this ID is set to `0`.
 - **User Image Uploading**: The image uploading functionality has been refactored to record the `userId` in the image table. If an image is uploaded without a logged-in user, the `userId` will be set to `0`.
 - **User Image Information Retrieval**: Added support for retrieving information about images uploaded by a user through the `/api/userImages` endpoint. This API is accessible to logged-in users only.
+
+## v0.3.0
+
+- **(BREAKING CHANGE) Deprecating Returning JWT Token as Response**: JWT tokens are now stored in Http-Only cookies to prevent XSS attacks.
+- **Standard Token Expiration Time**: Standardized the JWT duration time to exactly one month (2,592,000 seconds). The duration time of the cookie is set to the same length.
