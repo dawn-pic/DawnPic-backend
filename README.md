@@ -21,30 +21,10 @@
 
 - Java 17 or higher
 - MySQL database
-- Maven
 
-### Installation
+### Run
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/hanyujie2002/DawnPic.git
-    cd DawnPic
-    ```
-
-2. **Configure the database:**
-   Update the `application.yaml` file with your MySQL database credentials.
-
-3. **Build the project:**
-    ```bash
-    mvn clean install
-    ```
-
-4. **Run the application:**
-    ```bash
-    mvn spring-boot:run
-    ```
-
-Alternatively, you can download the jar file directly from the [GitHub releases page](https://github.com/hanyujie2002/DawnPic/releases).
+Download the jar file from the [GitHub releases page](https://github.com/hanyujie2002/DawnPic/releases), run it via `java -jar <jar-name>`.
 
 ## Usage Instructions
 
@@ -54,7 +34,7 @@ To create a new account, use the `/signup` endpoint. Provide the necessary user 
 
 ### User Login
 
-Log in to your account using the `/login` endpoint. You will receive a token upon successful authentication.
+Log in to your account using the `/login` endpoint. Upon successful authentication, a JWT token will be stored in a Http-Only cookie.
 
 ### Current User Information
 

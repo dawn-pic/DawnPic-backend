@@ -3,6 +3,7 @@ package com.hanyujie.dawnpic.jwt;
 import com.hanyujie.dawnpic.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
+        } else {
+            token = getValueFromCookies(request.getCookies(), "JWT_TOKEN");
+        }
+
+        if (token != null) {
             username = jwtUtil.getUsernameFromToken(token);
         }
 
@@ -61,5 +67,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String getValueFromCookies(Cookie[] cookies, String tokenName) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(tokenName)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
     }
 }
