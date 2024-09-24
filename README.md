@@ -1,6 +1,8 @@
 # DawnPic
 
-![banner image](./dawnpic.png)
+<div align="center">
+  <img src="./dawnpic.png" alt="logo" width="150">
+</div>
 
 ## Overview
 
