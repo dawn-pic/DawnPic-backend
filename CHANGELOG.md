@@ -1,5 +1,10 @@
 # Change Log of DawnPic
 
+## v1.0.0
+
+- **Image Deletion**: Implemented endpoint to delete images.
+- **User Images Info Endpoint**: Implemented an endpoint to retrieve information about user-uploaded images.
+
 ## v0.3.0
 
 - **(BREAKING CHANGE) Deprecating Returning JWT Token as Response**: JWT tokens are now stored in Http-Only cookies to prevent XSS attacks.
