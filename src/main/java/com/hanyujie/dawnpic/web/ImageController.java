@@ -1,5 +1,7 @@
 package com.hanyujie.dawnpic.web;
 
+import com.hanyujie.dawnpic.entity.ImageUploadResponse;
+import com.hanyujie.dawnpic.entity.UserImageCountResponse;
 import com.hanyujie.dawnpic.service.ImageService;
 import com.hanyujie.dawnpic.service.InvalidImageExtensionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,12 @@ public class ImageController {
     }
 
     @PostMapping("/api/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
         try {
+            System.out.println("testing");
             String result = imageService.uploadImage(file);
-            return ResponseEntity.ok(result);
+            ImageUploadResponse imageUploadResponse = new ImageUploadResponse(result);
+            return ResponseEntity.status(HttpStatus.OK).body(imageUploadResponse);
         } catch (InvalidImageExtensionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -41,7 +45,29 @@ public class ImageController {
     }
 
     @GetMapping("/api/userImages")
-    public ResponseEntity<?> getUserImages(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(imageService.getUserImage(userDetails));
+    public ResponseEntity<?> getUserImages(@RequestParam int page ,@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(imageService.getUserImage(userDetails, page));
+    }
+
+    @GetMapping("/api/userImagesCount")
+    public ResponseEntity<?> getUserImagesCount(@AuthenticationPrincipal UserDetails userDetails) {
+        int imageCount = imageService.getUserImageCount(userDetails);
+        UserImageCountResponse userImageCountResponse = new UserImageCountResponse(imageCount);
+        return ResponseEntity.ok(userImageCountResponse);
+    }
+
+    @DeleteMapping("/api/image/{imageUuid}")
+    public ResponseEntity<?> deleteImage(@PathVariable UUID imageUuid, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String username = userDetails.getUsername();
+            if (imageService.isOwner(imageUuid, username)) {
+                imageService.deleteImage(imageUuid);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this image");
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.toString());
+        }
     }
 }

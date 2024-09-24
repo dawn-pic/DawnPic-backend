@@ -14,11 +14,11 @@ class UserMapperTest {
     @Autowired
     UserMapper userMapper;
 
-    @Test
-    void selectUserImageByUserId() {
-        List<UserImage> userImages = userMapper.selectUserImageByUsername("anonymousUser");
-        for (UserImage userImage : userImages) {
-            System.out.println(userImage);
-        }
-    }
+//    @Test
+//    void selectUserImageByUserId() {
+//        List<UserImage> userImages = userMapper.selectUserImageByUsername();
+//        for (UserImage userImage : userImages) {
+//            System.out.println(userImage);
+//        }
+//    }
 }

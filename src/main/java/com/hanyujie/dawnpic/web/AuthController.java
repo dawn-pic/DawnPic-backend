@@ -1,6 +1,8 @@
 package com.hanyujie.dawnpic.web;
 
 import com.hanyujie.dawnpic.entity.AuthRequest;
+import com.hanyujie.dawnpic.entity.CheckUsernameResponse;
+import com.hanyujie.dawnpic.entity.CurrentUserResponse;
 import com.hanyujie.dawnpic.entity.User;
 import com.hanyujie.dawnpic.enums.RoleEnum;
 import com.hanyujie.dawnpic.jwt.JwtUtil;
@@ -9,19 +11,21 @@ import com.hanyujie.dawnpic.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 
 @RestController
+@RequestMapping("/api/user")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -82,6 +86,18 @@ public class AuthController {
 
     @GetMapping("/current-user")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(userDetails);
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User details not found");
+        }
+        CurrentUserResponse currentUserResponse = new CurrentUserResponse(userDetails.getUsername(), userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        return ResponseEntity.ok(currentUserResponse);
+    }
+
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsername(@RequestParam String username) {
+        boolean isUsernameExist = userService.isUsernameExist(username);
+
+        CheckUsernameResponse checkUsernameResponse = new CheckUsernameResponse(isUsernameExist);
+        return ResponseEntity.ok(checkUsernameResponse);
     }
 }

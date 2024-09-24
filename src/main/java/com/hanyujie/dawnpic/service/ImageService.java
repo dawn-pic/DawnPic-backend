@@ -1,5 +1,7 @@
 package com.hanyujie.dawnpic.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hanyujie.dawnpic.entity.Image;
 import com.hanyujie.dawnpic.entity.User;
 import com.hanyujie.dawnpic.entity.UserImage;
@@ -119,15 +121,32 @@ public class ImageService {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
-    public List<UserImage> getUserImage(UserDetails userDetails) {
+    public List<UserImage> getUserImage(UserDetails userDetails, int pageNumber) {
         String username = null;
 
-        if (userDetails == null) {
-            username = "anonymousUser";
-        } else {
+        if (userDetails != null) {
             username = userDetails.getUsername();
         }
 
-        return userMapper.selectUserImageByUsername(username);
+        Page<UserImage> page = new Page<>(pageNumber, 9);
+        page.setOptimizeCountSql(false);
+        QueryWrapper<UserImage> querywrapper = new QueryWrapper<>();
+        querywrapper.eq("username", username);
+
+        return userMapper.selectUserImageByUsername(page, querywrapper);
+    }
+
+    public int getUserImageCount(UserDetails userDetails) {
+        return userMapper.selectUserImageCount(userDetails.getUsername());
+    }
+
+    public boolean isOwner(UUID imageUuid, String username) {
+        String ownerUsername = userMapper.selectOwnerNameByImageUuid(imageUuid);
+
+        return ownerUsername.equals(username);
+    }
+
+    public void deleteImage(UUID imageUuid) throws IOException {
+        imageMapper.deleteById(imageUuid);
     }
 }

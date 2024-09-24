@@ -32,4 +32,8 @@ public class UserService {
 
         return userMapper.selectOne(queryWrapper);
     }
+
+    public boolean isUsernameExist(String username) {
+        return userMapper.selectCount(new QueryWrapper<User>().eq("username", username)) > 0;
+    }
 }

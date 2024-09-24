@@ -46,13 +46,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/upload").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/image/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/current-user").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/user/current-user").permitAll()
 
                         // Admin endpoints
                         .requestMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.getRole())
 
                         // user endpoints
                         .requestMatchers("/api/userImages").hasAnyAuthority(RoleEnum.USER.getRole(), RoleEnum.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.DELETE, "/api/image/**").hasAnyAuthority(RoleEnum.USER.getRole(), RoleEnum.ADMIN.getRole())
+                        .requestMatchers("/api/user/signup").permitAll()
+                        .requestMatchers("/api/user/login").permitAll()
+                        .requestMatchers("/api/user/check-username").permitAll()
+                        .requestMatchers("/api/userImagesCount").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
