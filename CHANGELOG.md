@@ -1,5 +1,17 @@
 # Change Log of DawnPic
 
+## v1.0.1
+
+[compare changes](https://github.com/hanyujie2002/DawnPic/compare/v1.0.0...v1.0.1)
+
+### 📖 Documentation
+
+- **readme:** Updated logo of dawn pic ([646cec4](https://github.com/hanyujie2002/DawnPic/commit/646cec4))
+
+### ❤️ Contributors
+
+- Hanyujie2002 ([@hanyujie2002](http://github.com/hanyujie2002))
+
 ## v1.0.0
 
 - **Image Deletion**: Implemented endpoint to delete images.
