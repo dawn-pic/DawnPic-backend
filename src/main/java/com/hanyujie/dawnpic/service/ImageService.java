@@ -121,6 +121,10 @@ public class ImageService {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
+    public boolean ifImageExist(UUID imageUuid) {
+        return imageMapper.exists(new QueryWrapper<Image>().eq("image_uuid", imageUuid));
+    }
+
     public List<UserImage> getUserImage(UserDetails userDetails, int pageNumber) {
         String username = null;
 

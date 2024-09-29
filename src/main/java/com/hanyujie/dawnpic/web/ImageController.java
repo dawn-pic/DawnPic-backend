@@ -4,7 +4,9 @@ import com.hanyujie.dawnpic.entity.ImageUploadResponse;
 import com.hanyujie.dawnpic.entity.UserImageCountResponse;
 import com.hanyujie.dawnpic.service.ImageService;
 import com.hanyujie.dawnpic.service.InvalidImageExtensionException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.UUID;
 
 @RestController
@@ -36,8 +39,16 @@ public class ImageController {
     }
 
     @GetMapping("/api/image/{imageUuid}")
-    public ResponseEntity<?> getImage(@PathVariable UUID imageUuid) {
+    public ResponseEntity<?> getImage(@PathVariable UUID imageUuid, @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch, HttpServletResponse httpServletResponse) {
         try {
+            String eTag = "\"" + imageUuid.toString() + "\"";
+
+            if (ifNoneMatch != null && imageService.ifImageExist(imageUuid)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+            }
+
+            httpServletResponse.setHeader("ETag", eTag);
+            httpServletResponse.setHeader("Cache-Control", "max-age=31536000, immutable");
             return imageService.downloadImage(imageUuid);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.toString());
