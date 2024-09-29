@@ -32,13 +32,14 @@ jobs:
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
+          path: source
 
       - name: Install Github CLI
         run: sudo apt-get install gh -y
 
       - name: Upload assets to release
         run: |
-          for file in ./maven-repo/hanyujie/DawnPic/**/*; do
+          for file in source/maven-repo/hanyujie/DawnPic/**/*; do
             echo "Uploading $file..."
             gh release upload ${{ github.ref }} "$file"
           done
