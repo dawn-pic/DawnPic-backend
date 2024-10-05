@@ -6,7 +6,6 @@ import com.hanyujie.dawnpic.service.ImageService;
 import com.hanyujie.dawnpic.service.InvalidImageExtensionException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,11 +28,14 @@ public class ImageController {
     }
 
     @PostMapping("/api/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadImage(@RequestParam("files") List<MultipartFile> files) throws IOException {
         try {
-            System.out.println("testing");
-            String result = imageService.uploadImage(file);
-            ImageUploadResponse imageUploadResponse = new ImageUploadResponse(result);
+            List<String> results = new ArrayList<>();
+            for (MultipartFile file : files) {
+                String result = imageService.uploadImage(file);
+                results.add(result);
+            }
+            ImageUploadResponse imageUploadResponse = new ImageUploadResponse(results);
             return ResponseEntity.status(HttpStatus.OK).body(imageUploadResponse);
         } catch (InvalidImageExtensionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
